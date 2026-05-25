@@ -1,0 +1,932 @@
+{
+  "posts": [
+    {
+      "date": 20,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Culinary",
+      "leg": true,
+      "label": "20-Mar (Reel)",
+      "Total_Interacciones_D1": 1807.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1780.0,
+      "Likes_D1": 21.0,
+      "Comments_D1": 6.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 22,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Santuario",
+      "leg": true,
+      "label": "22-Mar (Reel)",
+      "Total_Interacciones_D1": 1264.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1246.0,
+      "Likes_D1": 13.0,
+      "Comments_D1": 2.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 23,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Santuario",
+      "leg": true,
+      "label": "23-Mar (Reel)",
+      "Total_Interacciones_D1": 915.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 902.0,
+      "Likes_D1": 13.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 24,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Santuario",
+      "leg": true,
+      "label": "24-Mar (Reel)",
+      "Total_Interacciones_D1": 1030.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1002.0,
+      "Likes_D1": 22.0,
+      "Comments_D1": 2.0,
+      "Shared_D1": 2.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 26,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Adobe",
+      "leg": true,
+      "label": "26-Mar (Reel)",
+      "Total_Interacciones_D1": 1231.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1185.0,
+      "Likes_D1": 36.0,
+      "Comments_D1": 10.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 29,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "Community",
+      "leg": true,
+      "label": "29-Mar (Reel)",
+      "Total_Interacciones_D1": 1420.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1400.0,
+      "Likes_D1": 17.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 30,
+      "m": "Marzo",
+      "ym": "2026-03",
+      "tipo": "Reel",
+      "tema": "POV",
+      "leg": true,
+      "label": "30-Mar (Reel)",
+      "Total_Interacciones_D1": 1834.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1813.0,
+      "Likes_D1": 18.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 2.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 3,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Reel",
+      "tema": "Testimonials",
+      "leg": true,
+      "label": "3-Abr (Reel)",
+      "Total_Interacciones_D1": 1450.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1417.0,
+      "Likes_D1": 22.0,
+      "Comments_D1": 4.0,
+      "Shared_D1": 5.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 7,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Reel",
+      "tema": "Community",
+      "leg": true,
+      "label": "7-Abr (Reel)",
+      "Total_Interacciones_D1": 1271.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1240.0,
+      "Likes_D1": 27.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 4.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 10,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Post",
+      "tema": "Culinary",
+      "leg": true,
+      "label": "10-Abr (Post)",
+      "Total_Interacciones_D1": 1027.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1000.0,
+      "Likes_D1": 21.0,
+      "Comments_D1": 2.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 14,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Post",
+      "tema": "Community - Girls",
+      "leg": true,
+      "label": "14-Abr (Post)",
+      "Total_Interacciones_D1": 7477.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 7350.0,
+      "Likes_D1": 104.0,
+      "Comments_D1": 4.0,
+      "Shared_D1": 7.0,
+      "Saves_D1": 12.0
+    },
+    {
+      "date": 16,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Reel",
+      "tema": "POV",
+      "leg": true,
+      "label": "16-Abr (Reel)",
+      "Total_Interacciones_D1": 927.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 900.0,
+      "Likes_D1": 24.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 22,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Post",
+      "tema": "Natura & Community",
+      "leg": true,
+      "label": "22-Abr (Post)",
+      "Total_Interacciones_D1": 1583.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1536.0,
+      "Likes_D1": 45.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 2.0
+    },
+    {
+      "date": 27,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Post",
+      "tema": "Curanderas",
+      "leg": true,
+      "label": "27-Abr (Post)",
+      "Total_Interacciones_D1": 1234.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1200.0,
+      "Likes_D1": 28.0,
+      "Comments_D1": 4.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 28,
+      "m": "Abril",
+      "ym": "2026-04",
+      "tipo": "Reel",
+      "tema": "Collab - vita",
+      "leg": true,
+      "label": "28-Abr (Reel)",
+      "Total_Interacciones_D1": 3078.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 3000.0,
+      "Likes_D1": 61.0,
+      "Comments_D1": 13.0,
+      "Shared_D1": 3.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 2,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Reel",
+      "tema": "Collab - maleia",
+      "leg": true,
+      "label": "2-May (Reel)",
+      "Total_Interacciones_D1": 3000.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 3000.0,
+      "Likes_D1": null,
+      "Comments_D1": null,
+      "Shared_D1": null,
+      "Saves_D1": null
+    },
+    {
+      "date": 5,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Post",
+      "tema": "Community",
+      "leg": false,
+      "label": "5-May (Post)",
+      "Total_Interacciones_D1": 1060.0,
+      "Total_Interacciones_D3": 1229.0,
+      "Total_Interacciones_D7": 1371.0,
+      "Views_D1_Puras": 1038.0,
+      "Likes_D1": 15.0,
+      "Comments_D1": 2.0,
+      "Shared_D1": 4.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 8,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Post",
+      "tema": "Yoga",
+      "leg": false,
+      "label": "8-May (Post)",
+      "Total_Interacciones_D1": 2187.0,
+      "Total_Interacciones_D3": 2610.0,
+      "Total_Interacciones_D7": 2867.0,
+      "Views_D1_Puras": 2147.0,
+      "Likes_D1": 32.0,
+      "Comments_D1": 6.0,
+      "Shared_D1": 1.0,
+      "Saves_D1": 1.0
+    },
+    {
+      "date": 12,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Post",
+      "tema": "Collab - Grace",
+      "leg": false,
+      "label": "12-May (Post)",
+      "Total_Interacciones_D1": 2175.0,
+      "Total_Interacciones_D3": 2702.0,
+      "Total_Interacciones_D7": 3094.0,
+      "Views_D1_Puras": 2116.0,
+      "Likes_D1": 47.0,
+      "Comments_D1": 6.0,
+      "Shared_D1": 2.0,
+      "Saves_D1": 3.0
+    },
+    {
+      "date": 14,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Reel",
+      "tema": "Colab - Maleia",
+      "leg": false,
+      "label": "14-May (Reel)",
+      "Total_Interacciones_D1": 14.0,
+      "Total_Interacciones_D3": 14.0,
+      "Total_Interacciones_D7": 14.0,
+      "Views_D1_Puras": null,
+      "Likes_D1": null,
+      "Comments_D1": 12.0,
+      "Shared_D1": null,
+      "Saves_D1": null
+    },
+    {
+      "date": 15,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Reel",
+      "tema": "Mornings at barbarenas",
+      "leg": false,
+      "label": "15-May (Reel)",
+      "Total_Interacciones_D1": 348.0,
+      "Total_Interacciones_D3": 482.0,
+      "Total_Interacciones_D7": 536.0,
+      "Views_D1_Puras": 343.0,
+      "Likes_D1": 5.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 18,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Reel",
+      "tema": "Collab - Serah",
+      "leg": false,
+      "label": "18-May (Reel)",
+      "Total_Interacciones_D1": 8853.0,
+      "Total_Interacciones_D3": 11374.0,
+      "Total_Interacciones_D7": 12096.0,
+      "Views_D1_Puras": 8481.0,
+      "Likes_D1": 237.0,
+      "Comments_D1": 83.0,
+      "Shared_D1": 30.0,
+      "Saves_D1": 17.0
+    },
+    {
+      "date": 23,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Post",
+      "tema": "Ritual + Comunidad",
+      "leg": false,
+      "label": "23-May (Post)",
+      "Total_Interacciones_D1": 1019.0,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": 1007.0,
+      "Likes_D1": 12.0,
+      "Comments_D1": 0.0,
+      "Shared_D1": 0.0,
+      "Saves_D1": 0.0
+    },
+    {
+      "date": 26,
+      "m": "Mayo",
+      "ym": "2026-05",
+      "tipo": "Post",
+      "tema": "",
+      "leg": false,
+      "label": "26-May (Post)",
+      "Total_Interacciones_D1": null,
+      "Total_Interacciones_D3": null,
+      "Total_Interacciones_D7": null,
+      "Views_D1_Puras": null,
+      "Likes_D1": null,
+      "Comments_D1": null,
+      "Shared_D1": null,
+      "Saves_D1": null
+    }
+  ],
+  "daily": {
+    "2026-03": [
+      {
+        "d": 20,
+        "s": 4,
+        "f": 1
+      },
+      {
+        "d": 22,
+        "s": 3,
+        "f": 3
+      },
+      {
+        "d": 23,
+        "s": 6,
+        "f": 3
+      },
+      {
+        "d": 24,
+        "s": 6,
+        "f": 2
+      },
+      {
+        "d": 25,
+        "s": 3,
+        "f": 2
+      },
+      {
+        "d": 26,
+        "s": 2,
+        "f": 4
+      },
+      {
+        "d": 27,
+        "s": 4,
+        "f": 3
+      },
+      {
+        "d": 28,
+        "s": 3,
+        "f": 5
+      },
+      {
+        "d": 29,
+        "s": 4,
+        "f": 1
+      },
+      {
+        "d": 30,
+        "s": 2,
+        "f": 1
+      },
+      {
+        "d": 31,
+        "s": 0,
+        "f": 3
+      }
+    ],
+    "2026-04": [
+      {
+        "d": 1,
+        "s": 7,
+        "f": 2
+      },
+      {
+        "d": 2,
+        "s": 2,
+        "f": 1
+      },
+      {
+        "d": 3,
+        "s": 2,
+        "f": 4
+      },
+      {
+        "d": 4,
+        "s": 3,
+        "f": 0
+      },
+      {
+        "d": 5,
+        "s": 3,
+        "f": 4
+      },
+      {
+        "d": 6,
+        "s": 5,
+        "f": 4
+      },
+      {
+        "d": 7,
+        "s": 3,
+        "f": 2
+      },
+      {
+        "d": 8,
+        "s": 3,
+        "f": 3
+      },
+      {
+        "d": 9,
+        "s": 9,
+        "f": 1
+      },
+      {
+        "d": 10,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 11,
+        "s": 4,
+        "f": 11
+      },
+      {
+        "d": 12,
+        "s": 4,
+        "f": 8
+      },
+      {
+        "d": 13,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 14,
+        "s": 5,
+        "f": 4
+      },
+      {
+        "d": 15,
+        "s": 9,
+        "f": 2
+      },
+      {
+        "d": 16,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 17,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 18,
+        "s": 1,
+        "f": 1
+      },
+      {
+        "d": 19,
+        "s": 1,
+        "f": 1
+      },
+      {
+        "d": 20,
+        "s": 2,
+        "f": 2
+      },
+      {
+        "d": 21,
+        "s": 6,
+        "f": 2
+      },
+      {
+        "d": 22,
+        "s": 4,
+        "f": 0
+      },
+      {
+        "d": 23,
+        "s": 2,
+        "f": 4
+      },
+      {
+        "d": 24,
+        "s": 5,
+        "f": 2
+      },
+      {
+        "d": 25,
+        "s": 3,
+        "f": 1
+      },
+      {
+        "d": 26,
+        "s": 1,
+        "f": 3
+      },
+      {
+        "d": 27,
+        "s": 2,
+        "f": 2
+      },
+      {
+        "d": 28,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 29,
+        "s": 2,
+        "f": 1
+      },
+      {
+        "d": 30,
+        "s": 5,
+        "f": 1
+      }
+    ],
+    "2026-05": [
+      {
+        "d": 1,
+        "s": 9,
+        "f": 2
+      },
+      {
+        "d": 2,
+        "s": 5,
+        "f": 2
+      },
+      {
+        "d": 3,
+        "s": 1,
+        "f": 3
+      },
+      {
+        "d": 4,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 5,
+        "s": 1,
+        "f": 1
+      },
+      {
+        "d": 6,
+        "s": 7,
+        "f": 4
+      },
+      {
+        "d": 7,
+        "s": 5,
+        "f": 2
+      },
+      {
+        "d": 8,
+        "s": 1,
+        "f": 4
+      },
+      {
+        "d": 9,
+        "s": 3,
+        "f": 6
+      },
+      {
+        "d": 10,
+        "s": 5,
+        "f": 5
+      },
+      {
+        "d": 11,
+        "s": 5,
+        "f": 1
+      },
+      {
+        "d": 12,
+        "s": 4,
+        "f": 2
+      },
+      {
+        "d": 13,
+        "s": 9,
+        "f": 3
+      },
+      {
+        "d": 14,
+        "s": 3,
+        "f": 2
+      },
+      {
+        "d": 15,
+        "s": 1,
+        "f": 4
+      },
+      {
+        "d": 16,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 17,
+        "s": 1,
+        "f": 3
+      },
+      {
+        "d": 18,
+        "s": 3,
+        "f": 11
+      },
+      {
+        "d": 19,
+        "s": 1,
+        "f": 4
+      },
+      {
+        "d": 20,
+        "s": 1,
+        "f": 3
+      },
+      {
+        "d": 21,
+        "s": 1,
+        "f": 2
+      },
+      {
+        "d": 22,
+        "s": 1,
+        "f": 4
+      },
+      {
+        "d": 23,
+        "s": 2,
+        "f": 2
+      },
+      {
+        "d": 24,
+        "s": 2,
+        "f": 1
+      },
+      {
+        "d": 25,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 26,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 27,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 28,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 29,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 30,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 31,
+        "s": 0,
+        "f": 0
+      }
+    ],
+    "2026-06": [
+      {
+        "d": 1,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 2,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 3,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 4,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 5,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 6,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 7,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 8,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 9,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 10,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 11,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 12,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 13,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 14,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 15,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 16,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 17,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 18,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 19,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 20,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 21,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 22,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 23,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 24,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 25,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 26,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 27,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 28,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 29,
+        "s": 0,
+        "f": 0
+      },
+      {
+        "d": 30,
+        "s": 0,
+        "f": 0
+      }
+    ]
+  }
+}
