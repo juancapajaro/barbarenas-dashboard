@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es" class="theme-dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Integrado — Barbarenas & LobbyBee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script>if(typeof Chart!=="undefined")Chart.defaults.animation=false;</script>
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script src="marketing_data.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html.theme-dark{
+      --bg:#0e0e0c;--surface:#161612;--surface-hover:#1e1e19;
+      --border:rgba(255,255,255,0.07);
+      --text:#e8e4dc;--text-sec:#8a8478;
+      --accent:#7d9c6e;--gold:#c4a96b;--mauve:#a07090;--blue:#6090a0;
+      --positive:#7d9c6e;--warning:#c4a96b;--negative:#c97070;
+      --leaf-filter:invert(1);--chart-grid:rgba(255,255,255,0.04);
+      --sidebar-bg:#161612;--sidebar-border:rgba(255,255,255,0.07);
+    }
+    html.theme-light{
+      --bg:#f5f2ec;--surface:#fffef9;--surface-hover:#f0ece3;
+      --border:rgba(0,0,0,0.07);
+      --text:#1c1a16;--text-sec:#6b6358;
+      --accent:#4d7040;--gold:#9a7a3a;--mauve:#7a5070;--blue:#406080;
+      --positive:#4d7040;--warning:#9a7a3a;--negative:#a04040;
+      --leaf-filter:none;--chart-grid:rgba(0,0,0,0.05);
+      --sidebar-bg:#fff;--sidebar-border:rgba(0,0,0,0.12);
+    }
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+      line-height:1.6;-webkit-font-smoothing:antialiased;letter-spacing:-0.01em;
+      transition:background 0.3s,color 0.3s;}
+    h1,h2{font-family:'Cormorant Garamond',Georgia,serif;color:var(--text);letter-spacing:-0.01em;}
+    h1{font-weight:400;font-style:italic;}
+    h3,h4,p,span,td,th,li{color:var(--text);}
+
+    /* LAYOUT */
+    .layout{display:flex;min-height:100vh;}
+    .sidebar{width:220px;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);
+      padding:20px 16px;flex-shrink:0;display:flex;flex-direction:column;gap:4px;}
+    .logo-wrap{width:50px;height:50px;display:flex;align-items:center;justify-content:center;
+      background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+      margin-bottom:16px;}
+    .logo-wrap img{width:38px;height:38px;object-fit:contain;filter:var(--leaf-filter);opacity:0.88;}
+    .logo-text{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--text);}
+    .logo-text span{color:var(--accent);}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+      font-size:13px;color:var(--text-sec);cursor:pointer;transition:all 0.15s;}
+    .nav-item:hover{background:var(--surface-hover);color:var(--text);}
+    .nav-item.active{background:var(--surface);border:1px solid var(--border);color:var(--text);font-weight:500;}
+    .nav-icon{width:18px;text-align:center;font-size:14px;}
+    .main{flex:1;padding:0 28px 72px;overflow-x:hidden;min-width:0;}
+
+    /* HEADER */
+    .header{padding:32px 0 0;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+    .header-title h1{font-size:1.7rem;line-height:1.1;}
+    .header-title p{font-size:0.72rem;color:var(--text-sec);margin-top:3px;
+      font-family:Inter,sans-serif;letter-spacing:0.06em;text-transform:uppercase;}
+
+    /* CSV UPLOAD */
+    .csv-drop-zone{
+      border:1.5px dashed var(--border);border-radius:10px;
+      padding:14px 20px;margin-top:16px;
+      display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+      cursor:pointer;transition:border-color 0.2s,background 0.2s;
+      background:transparent;}
+    .csv-drop-zone:hover,.csv-drop-zone.drag-over{
+      border-color:var(--accent);background:rgba(125,156,110,0.05);}
+    .csv-drop-left{display:flex;align-items:center;gap:10px;}
+    .csv-icon{width:32px;height:32px;border-radius:7px;background:rgba(125,156,110,0.12);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .csv-icon svg{color:var(--accent);}
+    .csv-text{font-size:12.5px;color:var(--text-sec);}
+    .csv-text strong{color:var(--text);font-weight:600;}
+    .csv-btn{
+      padding:7px 16px;border-radius:7px;background:var(--accent);border:none;
+      color:#fff;font-family:Inter,sans-serif;font-size:12px;font-weight:600;
+      cursor:pointer;transition:opacity 0.15s;flex-shrink:0;}
+    .csv-btn:hover{opacity:0.85;}
+    .csv-status{font-size:11px;color:var(--text-sec);margin-top:6px;padding:0 4px;}
+    .csv-status.ok{color:var(--positive);}
+    .csv-status.err{color:var(--negative);}
+    #csvFileInput,#occFileInput{display:none;}
+
+    /* DATE FILTER */
+    .date-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .date-bar label{font-size:11.5px;color:var(--text-sec);font-weight:500;}
+    .date-bar select{padding:6px 10px;border-radius:7px;background:var(--surface);
+      border:1px solid var(--border);color:var(--text);font-family:Inter,sans-serif;
+      font-size:12.5px;cursor:pointer;transition:border-color 0.15s;}
+    .date-bar select:focus{outline:none;border-color:var(--accent);}
+    .sep{font-size:11px;color:var(--text-sec);}
+    .period-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;
+      border-radius:999px;background:var(--surface);border:1px solid var(--border);
+      font-size:11px;color:var(--text-sec);font-weight:500;}
+    .period-dot{width:6px;height:6px;border-radius:50%;background:var(--positive);flex-shrink:0;}
+
+    .hdivider{margin:16px 0 0;height:1px;background:var(--border);}
+
+    /* TABS */
+    .tab-bar{margin:0 0 24px;padding:14px 0 0;display:flex;gap:2px;}
+    .tab-btn{padding:8px 20px;border-radius:8px;border:none;background:transparent;
+      color:var(--text-sec);font-family:Inter,sans-serif;font-size:13px;font-weight:500;
+      cursor:pointer;transition:all 0.15s;}
+    .tab-btn:hover{background:var(--surface);color:var(--text);}
+    .tab-btn.active{background:var(--surface);border:1px solid var(--border);color:var(--text);}
+
+    .section{display:none;}
+    .section.active{display:block;}
+
+    /* KPIs */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:11px;margin-bottom:24px;}
+    .kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 16px 13px;transition:box-shadow 0.2s;}
+    .kpi:hover{box-shadow:0 0 0 1px var(--border),0 4px 14px rgba(0,0,0,0.1);}
+    .kpi-label{font-size:10.5px;color:var(--text-sec);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:7px;}
+    .kpi-value{font-size:1.9rem;font-weight:700;color:var(--text);line-height:1;font-family:Inter,sans-serif;}
+    .kpi-value.ac{color:var(--accent);}
+    .kpi-value.go{color:var(--gold);}
+    .kpi-sub{font-size:10.5px;color:var(--text-sec);margin-top:4px;}
+
+    /* CARDS & CHARTS */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;transition:box-shadow 0.2s;}
+    .card:hover{box-shadow:0 0 0 1px var(--border),0 6px 18px rgba(0,0,0,0.1);}
+    .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:20px;}
+    .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;}
+    .chart-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px;font-family:Inter,sans-serif;}
+    .chart-sub{font-size:11px;color:var(--text-sec);margin-bottom:16px;}
+    .cw{position:relative;height:240px;}
+    .cw-tall{position:relative;height:300px;}
+
+    /* TABLE */
+    .tbl-wrap{overflow-x:auto;margin-bottom:24px;}
+    table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:480px;}
+    thead th{padding:9px 11px;text-align:left;font-size:10px;font-weight:600;color:var(--text-sec);
+      text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid var(--border);}
+    tbody td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text);}
+    tbody tr:hover td{background:var(--surface-hover);}
+    tbody tr:last-child td{border-bottom:none;}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;}
+    .pill-reel{background:rgba(125,156,110,0.14);color:var(--accent);}
+    .pill-post{background:rgba(196,169,107,0.14);color:var(--gold);}
+    .nn{color:var(--text-sec);font-size:10.5px;}
+
+    /* INFO BOX */
+    .info-box{display:flex;align-items:flex-start;gap:10px;padding:12px 15px;border-radius:8px;
+      background:rgba(196,169,107,0.07);border:1px solid rgba(196,169,107,0.18);
+      margin-bottom:18px;font-size:11.5px;color:var(--text-sec);line-height:1.55;}
+    .info-box svg{flex-shrink:0;margin-top:1px;color:var(--gold);}
+    .info-box strong{color:var(--gold);}
+
+    /* DAY TOGGLE */
+    .day-toggle{display:flex;align-items:center;gap:4px;margin-bottom:14px;}
+    .day-lbl{font-size:12px;color:var(--text-sec);font-weight:500;margin-right:6px;}
+    .day-btn{padding:5px 13px;border-radius:6px;border:1px solid var(--border);background:transparent;
+      color:var(--text-sec);font-family:Inter,sans-serif;font-size:12px;font-weight:600;
+      cursor:pointer;transition:all 0.15s;}
+    .day-btn.active{background:var(--accent);color:#fff;border-color:transparent;}
+
+    /* LEGEND */
+    .legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+    .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sec);}
+    .ld{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+    .sec-head{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:12px;font-family:Inter,sans-serif;}
+    .mn{font-size:10.5px;color:var(--text-sec);font-style:italic;}
+    .no-data{padding:44px 24px;text-align:center;font-size:13px;color:var(--text-sec);}
+
+    /* OCCUPANCY SPECIFIC */
+    .toggle-group{display:flex;gap:3px;background:var(--surface);padding:3px;border-radius:8px;}
+    .toggle-btn{font-size:12px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;color:var(--text-sec);
+      background:transparent;font-weight:400;font-family:inherit;}
+    .toggle-btn.active{background:var(--bg);color:var(--text);font-weight:500;border:1px solid var(--border);}
+    .month-filter{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1rem;}
+    .month-btn{font-size:12px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);
+      cursor:pointer;background:var(--surface);color:var(--text-sec);font-family:inherit;}
+    .month-btn.active{background:rgba(125,156,110,0.15);color:var(--accent);border-color:var(--accent);font-weight:500;}
+    .month-btn:disabled{opacity:.35;cursor:default;}
+    .occ-bar-wrap{margin-top:3px;height:4px;background:var(--surface-hover);border-radius:4px;overflow:hidden;}
+    .occ-bar{height:100%;border-radius:4px;background:var(--accent);transition:width .3s;}
+    .retreat-tag{display:inline-block;background:rgba(125,156,110,0.15);color:var(--accent);
+      font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px;font-weight:500;}
+
+    /* VIZ MENU */
+    .viz-menu{position:fixed;top:16px;right:16px;z-index:9999;}
+    .vm-btn{width:40px;height:40px;border-radius:9px;background:var(--surface);border:1px solid var(--border);
+      color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
+      backdrop-filter:blur(12px);transition:all 0.2s;}
+    .vm-btn:hover{background:var(--surface-hover);}
+    .vm-drop{position:absolute;top:48px;right:0;min-width:175px;background:var(--surface);
+      border:1px solid var(--border);border-radius:10px;padding:6px;
+      opacity:0;visibility:hidden;transform:translateY(-8px);transition:all 0.18s;}
+    .vm-drop.open{opacity:1;visibility:visible;transform:translateY(0);}
+    .vm-drop button{width:100%;padding:9px 12px;border:none;border-radius:7px;background:transparent;
+      color:var(--text);font-size:12.5px;font-family:inherit;cursor:pointer;text-align:left;
+      display:flex;align-items:center;gap:9px;transition:background 0.12s;}
+    .vm-drop button:hover{background:var(--surface-hover);}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .an{animation:fadeUp 0.5s ease-out both;}
+    .an.d1{animation-delay:0.05s}.an.d2{animation-delay:0.1s}.an.d3{animation-delay:0.15s}
+    .an.d4{animation-delay:0.2s}.an.d5{animation-delay:0.25s}.an.d6{animation-delay:0.3s}
+    .rev{opacity:0;transform:translateY(16px);transition:opacity 0.55s,transform 0.55s;}
+    .rev.vis{opacity:1;transform:translateY(0);}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.rev{opacity:1;transform:none;}}
+    @media print{.viz-menu,.sidebar,.tab-bar,.day-toggle,.date-bar,.csv-drop-zone{display:none!important;}
+      .card,.chart-card{break-inside:avoid;border:1px solid #ddd!important;box-shadow:none!important;}
+      *{print-color-adjust:exact;-webkit-print-color-adjust:exact;}}
+    @page{margin:0.75in;}
+    @media(max-width:768px){.layout{flex-direction:column;}.sidebar{width:100%;padding:12px;flex-direction:row;align-items:center;justify-content:space-between;}
+      .kpi-grid{grid-template-columns:repeat(2,1fr);}.chart-grid{grid-template-columns:1fr;}
+      .header-title h1{font-size:1.3rem;}.date-bar{margin-top:12px;}.main{padding:0 16px 56px;}}
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAIAAAAErfB6AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAACf+ElEQVR42uz9d0DU59Y2Ck9vTGHoQ++99yIgXRGwYIm995LYo0ZNjNHYjb13UVFAbBTpvffehjbAwDBMZxpw/ljvw/E12dnZe+d53nO+78xfxuAw87vve91rXeu6roVG/IsvFAo1/WckEon4/15/3wuFQmGxWBQKNTk5+X/g8X65tCoqKjQaDY1G43C4/2+Z/64XEonE4XAIBMLc3NzCwuJvWWPUX/w5DAYzOTmJQqECAgJUVVUZDMbU1NTU1NS/8R1QKBT6v14oFAqFQiH/6/X/5ws8NTWlUChQKJRSqVy0aJG6uvqXh+rfe6H/4uoqlcqQkJCnT59OTk76+PhwOJy2tjY8Hi+Xy//pMiORSFhL+A6/f/3/2CmELftvf6+pqSkej1dVVUWlUgUCAQqF+k8e0T8/NGg0emJiYtmyZY8fP162bNnAwMD4+HhVVRUWi0UgEAqF4k++KnzPLz+fnp6epaWliYkJHo8Xi8U8Hk8kEo2NjQmFQrFYLJVKZTKZXC6fmJiY/rb/r7g7IfxMf+wv/x6JRE5OTsK1+tffEI1Gw7PFYrFKpfLffg6Yf7ofp6am9PX19+/fv2bNmrdv32pra2OxWNincrn8z3cifCwLCwtXV1cGg6Gtra2qqkoikSYnJyUSiVwuHxwcbGlpIZFIWCwWjUYTicTR0dGcnBy5XI5CoRQKBRaLnZiYgLeCGPAvPan/1pP6+8XD4/GGhoZaWloSiaSpqUkmk311VCYnJ//KUk1OTiKRSBqNtmPHjrNnz6JQqK+2zt+2wFgsVi6X79279/DhwzNmzEChUAcPHszKyuru7v6TKAQ7V0tLa+bMmZ6enjo6Okwmc2BgoKamBolEkkgkDAaDxWJ7enqysrKWL1+ura2tUCgEAsHo6KhCofDx8enq6pqYmJDL5UNDQxDeMRiMVCqdfv//U8sMOxsO6/TXd3V1DQ8P19TUVCqVZDIZhUIRCIScnJzu7m5LS0s7O7usrKzMzEyxWDydq/7550cikRgMhs/nu7q6GhgYdHV1/dsxH/PnV69cLj9w4IBQKHRwcCCRSNra2hoaGmZmZnCepi+b6cMKKwHhBYVC1dfXf/r0ic/nIxAIVVVVIpGop6fX2toqFAqXLFkyY8YMIpHo5OS0evVqMpk8/XtlMllPT09PT8/w8HBSUlJxcbFYLPbz8zM0NGQymRkZGRMTE3Bx/A+v69TU1OTkJPxeOp0O6+rh4UEmk7u6uvh8PoFAUFFRUSqVHR0dDg4OPj4+RCKRRCJt3rx56dKlZWVlmZmZdXV10wca3vAfnSsnJ6fMzEw+n/+f3OjIPw/Ojo6Oz58/nzt3rrq6uoqKyrp160pKSo4ePaqnpwc/8OXgxpOoVCoqKgIhUIEAmFnZ+fl5eXh4WFra6ujo6OhoUGhUEJDQ0kk0tDQEAqF8vb2LisrE4lE+vr6ISEhMTExtra28G5isZjP52tqar569eq77767cePGwMAAm802NTVNTU1NTEz8T772v3q/Tm8mExOTGTNmuLu7Ozk56erqdnR0dHZ2...[53109 bytes truncated]
+    </div>
+    <div class="logo-text">🐝 <span>Barbarenas</span></div>
+    <div class="nav-item active" onclick="showSection('marketing',this)">
+      <span class="nav-icon">📊</span> Marketing
+    </div>
+    <div class="nav-item" onclick="showSection('occupancy',this)">
+      <span class="nav-icon">🛏</span> Occupancy
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="viz-menu">
+      <button class="vm-btn" onclick="toggleMenu()" aria-label="Menú">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/>
+        </svg>
+      </button>
+      <div class="vm-drop" id="vmDrop">
+        <button onclick="cycleTheme()"><span id="themeIco">🌙</span><span id="themeLbl">Dark</span></button>
+        <button onclick="dlImage()"><span>📥</span><span>Descargar PNG</span></button>
+        <button onclick="window.print()"><span>🖨️</span><span>Imprimir / PDF</span></button>
+      </div>
+    </div>
+
+    <!-- MARKETING SECTION -->
+    <div class="section active" id="section-marketing">
+      <header class="header an d1">
+        <div class="header-title">
+          <h1>Marketing Dashboard</h1>
+          <p>Barbarenas · Eco Retreat · Puerto Escondido, Oaxaca</p>
+        </div>
+        <div class="date-bar">
+          <label>Período:</label>
+          <select id="selFrom" onchange="applyFilter()">
+            <option value="2026-03">Marzo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-05" selected>Mayo 2026</option>
+          </select>
+          <span class="sep">→</span>
+          <select id="selTo" onchange="applyFilter()">
+            <option value="2026-03">Marzo 2026</option>
+            <option value="2026-04">Abril 2026</option>
+            <option value="2026-05" selected>Mayo 2026</option>
+          </select>
+          <span class="period-pill"><span class="period-dot"></span><span id="periodLbl">Abr → May</span></span>
+        </div>
+      </header>
+
+      
+
+      <div class="csv-drop-zone an d3" id="csvDropZone2" onclick="document.getElementById('csvFileInput2').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="handleDrop(event, 2)">
+        <div class="csv-drop-left">
+          <div class="csv-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </div>
+          <div class="csv-text">
+            <strong>CSV 2 (Daily)</strong> — arrastrá tu CSV aquí o hacé clic para seleccionar
+          </div>
+        </div>
+        <button class="csv-btn" onclick="event.stopPropagation();document.getElementById('csvFileInput2').click()">
+          Cargar CSV 2
+        </button>
+      </div>
+      <div class="csv-status" id="csvStatus2"></div>
+      <input type="file" id="csvFileInput2" accept=".csv" onchange="handleCSV(this.files[0], 2)">
+
+      <div class="hdivider"></div>
+
+      <div class="tab-bar an d3">
+        <button class="tab-btn active" onclick="showTab('resumen',this)">Resumen mensual</button>
+        <button class="tab-btn" onclick="showTab('diario',this)">Registro diario</button>
+        <button class="tab-btn" onclick="showTab('posts',this)">Posts &amp; métricas</button>
+      </div>
+
+      <!-- TAB RESUMEN -->
+      <div class="tab-section active" id="tab-resumen">
+        <div class="kpi-grid">
+          <div class="kpi an d1"><div class="kpi-label">Total Posts</div>
+            <div class="kpi-value ac" id="kv-posts">—</div><div class="kpi-sub" id="ks-posts">—</div></div>
+          <div class="kpi an d2"><div class="kpi-label">Total Views</div>
+            <div class="kpi-value" id="kv-views">—</div><div class="kpi-sub">Total al mes / D1 desde mayo</div></div>
+          <div class="kpi an d3"><div class="kpi-label">Total Likes</div>
+            <div class="kpi-value" id="kv-likes">—</div><div class="kpi-sub">Acumulado período</div></div>
+          <div class="kpi an d4"><div class="kpi-label">Nuevos Seguidores</div>
+            <div class="kpi-value go" id="kv-followers">—</div><div class="kpi-sub">Registro diario</div></div>
+          <div class="kpi an d5"><div class="kpi-label">Total Saves</div>
+            <div class="kpi-value" id="kv-saves">—</div><div class="kpi-sub">Acumulado período</div></div>
+          <div class="kpi an d6"><div class="kpi-label">Stories registradas</div>
+            <div class="kpi-value" id="kv-stories">—</div><div class="kpi-sub">Historias contadas</div></div>
+        </div>
+
+        <div class="info-box an d3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div><strong>Contexto de métricas:</strong> Posts anteriores al <strong>5 de mayo 2026</strong> muestran el <strong>total acumulado al mes del posteo</strong>. A partir del post <em>Community</em> (5-May) registramos por separado <strong>D1 · D3 · D7</strong>.</div>
+        </div>
+
+        <div class="chart-grid rev">
+          <div class="chart-card"><div class="chart-title">Posts por mes</div>
+            <div class="chart-sub">Publicaciones en el período seleccionado</div>
+            <div class="cw"><canvas id="cMonthPosts"></canvas></div></div>
+          <div class="chart-card"><div class="chart-title">Views totales por mes</div>
+            <div class="chart-sub">Total al mes (pre-mayo) · D1 desde mayo</div>
+            <div class="cw"><canvas id="cMonthViews"></canvas></div></div>
+        </div>
+
+        <div class="chart-card rev" style="margin-bottom:20px;">
+          <div class="chart-title">Engagement por mes — Likes · Shared · Saves · Comments</div>
+          <div class="chart-sub">Acumulado por mes</div>
+          <div class="legend">
+            <div class="legend-item"><div class="ld" style="background:#7d9c6e"></div>Likes</div>
+            <div class="legend-item"><div class="ld" style="background:#c4a96b"></div>Shared</div>
+            <div class="legend-item"><div class="ld" style="background:#a07090"></div>Saves</div>
+            <div class="legend-item"><div class="ld" style="background:#6090a0"></div>Comments</div>
+          </div>
+          <div class="cw-tall"><canvas id="cMonthMetrics"></canvas></div>
+        </div>
+
+        <div class="card rev">
+          <p class="sec-head">Tabla comparativa mensual</p>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Mes</th><th>Posts</th><th>Stories</th><th>Seguidores +</th><th>Views</th><th>Likes</th><th>Saves</th><th>Estado</th></tr></thead>
+            <tbody id="monthly-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- TAB DIARIO -->
+      <div class="tab-section" id="tab-diario">
+        <div id="daily-content">
+          <div class="chart-card" style="margin-bottom:18px;">
+            <div class="chart-title">Stories por día — Abril 2026</div>
+            <div class="chart-sub">Historias publicadas cada día</div>
+            <div class="cw-tall"><canvas id="cStoriesApr"></canvas></div>
+          </div>
+          <div class="chart-card" style="margin-bottom:18px;">
+            <div class="chart-title">Stories por día — Mayo 2026</div>
+            <div class="chart-sub">Datos hasta el día 8</div>
+            <div class="cw"><canvas id="cStoriesMay"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Nuevos seguidores por día — Abril &amp; Mayo</div>
+            <div class="chart-sub">Seguidores ganados por día registrado</div>
+            <div class="cw-tall"><canvas id="cFollowersDaily"></canvas></div>
+          </div>
+        </div>
+        <div class="no-data" id="daily-nodata" style="display:none">No hay datos diarios para el período seleccionado.</div>
+      </div>
+
+      <!-- TAB POSTS -->
+      <div class="tab-section" id="tab-posts">
+        <div class="info-box" style="margin-bottom:14px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>Posts antes del <strong>5-May-2026</strong>: métricas = <strong>total acumulado al mes</strong>. Desde <em>Community</em> (5-May): registramos <strong>D1 · D3 · D7</strong> por separado.</div>
+        </div>
+        <div class="chart-card rev" style="margin-bottom:16px;">
+          <div class="chart-title">Evolución y Crecimiento de Interacciones (D1, D3, D7)</div>
+          <div class="chart-sub">Suma de Views, Likes, Comments, Shared, Repost y Saves</div>
+          <div class="legend">
+            <div class="legend-item"><div class="ld" style="background:var(--blue)"></div>D1</div>
+            <div class="legend-item"><div class="ld" style="background:var(--gold)"></div>D3</div>
+            <div class="legend-item"><div class="ld" style="background:var(--accent)"></div>D7</div>
+          </div>
+          <div class="cw-tall"><canvas id="cInteractions"></canvas></div>
+        </div>
+
+        <div class="chart-card rev" style="margin-bottom:16px;">
+          <div class="chart-title">Alcance Inmediato - Vistas Totales Día 1 (Views D1)</div>
+          <div class="chart-sub">Volumen de reproducciones iniciales por publicación</div>
+          <div class="cw-tall"><canvas id="cViewsD1"></canvas></div>
+        </div>
+
+        <div class="card rev">
+          <p class="sec-head" id="tt-posts">Todos los posts — D1 / Total al mes</p>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>Fecha</th><th>Tipo</th><th>Tema</th>
+              <th>Views D1</th><th>Inter. D1</th><th>Inter. D3</th><th>Inter. D7</th><th></th>
+              <th>Fuente</th></tr></thead>
+            <tbody id="posts-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OCCUPANCY SECTION -->
+    <div class="section" id="section-occupancy">
+      <header class="header">
+        <div class="header-title">
+          <h1>Occupancy Dashboard</h1>
+          <p>LobbyBee · Puerto Escondido, Oaxaca</p>
+        </div>
+        <div class="toggle-group" id="viewToggle">
+          <button class="toggle-btn active" onclick="setView('month')">Mensual</button>
+          <button class="toggle-btn" onclick="setView('room')">Por hab.</button>
+        </div>
+      </header>
+
+      <label class="csv-drop-zone" for="occFileInput">
+        <div class="csv-drop-left">
+          <div class="csv-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 12 15 15"/>
+            </svg>
+          </div>
+          <div class="csv-text">
+            <strong>Subir TSV / CSV de occupancy</strong> — exporta desde Excel y arrastra o haz clic aquí
+          </div>
+        </div>
+        <button class="csv-btn" onclick="event.stopPropagation();document.getElementById('occFileInput').click()">
+          Cargar archivo
+        </button>
+      </label>
+      <input type="file" id="occFileInput" accept=".tsv,.csv,.txt">
+
+      <div class="hdivider"></div>
+
+      <div id="occ-content">
+        <div class="no-data"><div style="font-size:40px;opacity:.3">📋</div><p>Sube tu archivo para ver el dashboard</p></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showSection(name,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// MARKETING DATA
+// ══════════════════════════════════════════
+var MONTH_NAMES_MAP = {"2026-03":"Marzo","2026-04":"Abril","2026-05":"Mayo"};
+var EN_MONTH_YM = {"march":"2026-03","april":"2026-04","may":"2026-05","june":"2026-06","july":"2026-07","august":"2026-08"};
+
+var BASE_POSTS = [
+  {date:20,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"Culinary",       leg:true, d1:[1780,21,6,0,0,0],  d3:[],d7:[]},
+  {date:22,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"santuario",      leg:true, d1:[1246,13,2,1,2,0],  d3:[],d7:[]},
+  {date:23,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"santuario",      leg:true, d1:[902,13,0,0,0,0],   d3:[],d7:[]},
+  {date:24,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"santuario",      leg:true, d1:[1002,22,2,2,2,0],  d3:[],d7:[]},
+  {date:26,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"adobe bambu",    leg:true, d1:[1185,36,10,0,0,0], d3:[],d7:[]},
+  {date:29,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"Comunidad",      leg:true, d1:[1400,17,0,1,1,1],  d3:[],d7:[]},
+  {date:30,m:"Marzo",ym:"2026-03",tipo:"Reel",tema:"POV",            leg:true, d1:[1813,18,0,2,0,1],  d3:[],d7:[]},
+  {date:3, m:"Abril",ym:"2026-04",tipo:"Reel",tema:"testimonios",    leg:true, d1:[1417,22,4,5,1,1],  d3:[],d7:[]},
+  {date:7, m:"Abril",ym:"2026-04",tipo:"Reel",tema:"community",      leg:true, d1:[1240,27,0,4,0,0],  d3:[],d7:[]},
+  {date:10,m:"Abril",ym:"2026-04",tipo:"Post",tema:"culinary",       leg:true, d1:[1000,21,2,1,2,1],  d3:[],d7:[]},
+  {date:14,m:"Abril",ym:"2026-04",tipo:"Post",tema:"community girls",leg:true, d1:[7350,104,4,7,0,12],d3:[],d7:[]},
+  {date:16,m:"Abril",ym:"2026-04",tipo:"Reel",tema:"pov",            leg:true, d1:[900,24,0,1,1,1],   d3:[],d7:[]},
+  {date:22,m:"Abril",ym:"2026-04",tipo:"Post",tema:"nature/comunidad",leg:true,d1:[1536,45,0,0,0,2],  d3:[],d7:[]},
+  {date:27,m:"Abril",ym:"2026-04",tipo:"Post",tema:"curanderas",     leg:true, d1:[1200,28,4,1,1,0],  d3:[],d7:[]},
+  {date:28,m:"Abril",ym:"2026-04",tipo:"Reel",tema:"collab - vita",  leg:true, d1:[3000,61,13,3,0,1], d3:[],d7:[]},
+  {date:2, m:"Mayo", ym:"2026-05",tipo:"Reel",tema:"collab - maleia",leg:true, d1:[3000,null,null,null,null,null],d3:[],d7:[]},
+  {date:5, m:"Mayo", ym:"2026-05",tipo:"Post",tema:"Community",      leg:false,d1:[1038,15,2,4,0,1],  d3:[1205,17,2,4,0,1],d7:[]},
+  {date:8, m:"Mayo", ym:"2026-05",tipo:"Post",tema:"Yoga",           leg:false,d1:[null,null,null,null,null,null],d3:[],d7:[]},
+];
+
+var BASE_DAILY = {
+  "2026-03":[
+    {d:20,s:4,f:1},{d:22,s:3,f:3},{d:23,s:6,f:3},{d:24,s:6,f:2},{d:25,s:3,f:2},
+    {d:26,s:2,f:4},{d:27,s:4,f:3},{d:28,s:3,f:5},{d:29,s:4,f:1},{d:30,s:2,f:1},{d:31,s:0,f:3}
+  ],
+  "2026-04":[
+    {d:1,s:7,f:2},{d:2,s:2,f:1},{d:3,s:2,f:4},{d:4,s:3,f:0},{d:5,s:3,f:4},
+    {d:6,s:5,f:4},{d:7,s:3,f:2},{d:8,s:3,f:3},{d:9,s:9,f:1},{d:10,s:1,f:2},
+    {d:11,s:4,f:11},{d:12,s:4,f:8},{d:13,s:1,f:2},{d:14,s:5,f:4},{d:15,s:9,f:2},
+    {d:16,s:1,f:2},{d:17,s:1,f:2},{d:18,s:1,f:1},{d:19,s:1,f:1},{d:20,s:2,f:2},
+    {d:21,s:6,f:2},{d:22,s:4,f:0},{d:23,s:2,f:4},{d:24,s:5,f:2},{d:25,s:3,f:1},
+    {d:26,s:1,f:3},{d:27,s:2,f:2},{d:28,s:1,f:2},{d:29,s:2,f:1},{d:30,s:5,f:1}
+  ],
+  "2026-05":[
+    {d:1,s:9,f:2},{d:2,s:5,f:2},{d:3,s:1,f:3},{d:4,s:1,f:2},
+    {d:5,s:1,f:1},{d:6,s:7,f:4},{d:7,s:5,f:2},{d:8,s:1,f:4},{d:9,s:3,f:6},{d:10,s:5,f:2}
+  ]
+};
+
+var BASE_SUMMARY = {
+  "2026-03":{posts:7, stories:40, followers:28, views:9328,  likes:140,saves:2, comments:20,shared:6,  note:"Stories desde día 20"},
+  "2026-04":{posts:8, stories:101,followers:82, views:17643, likes:312,saves:17,comments:27,shared:22, note:"Datos completos"},
+  "2026-05":{posts:3, stories:33, followers:27, views:4038,  likes:15, saves:1, comments:2, shared:4,  note:"Hasta día 10 (en curso)"}
+};
+
+var POSTS   = BASE_POSTS.slice();
+var DAILY   = JSON.parse(JSON.stringify(BASE_DAILY));
+var SUMMARY = JSON.parse(JSON.stringify(BASE_SUMMARY));
+var MONTH_NAMES = JSON.parse(JSON.stringify(MONTH_NAMES_MAP));
+var curMetric="views", fromYM="2026-04", toYM="2026-05";
+
+// Variables para almacenar datos de ambos CSVs por separado
+var CSV1_DATA = {posts:[],daily:{},summary:{}};
+var CSV2_DATA = {posts:[],daily:{},summary:{}};
+var csv1Loaded = false;
+var csv2Loaded = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.MARKETING_DATA) {
+    var data = window.MARKETING_DATA;
+    CSV1_DATA.posts = data.posts;
+    CSV1_DATA.daily = data.daily || {};
+    csv1Loaded = true;
+    var newSummaryMap = {};
+    data.posts.forEach(function(p){
+        var ym = p.ym;
+        if(!newSummaryMap[ym]) newSummaryMap[ym]={posts:0,stories:0,followers:0,views:0,likes:0,saves:0,comments:0,shared:0,note:"JSON data"};
+        var sm = newSummaryMap[ym];
+        sm.posts    += 1;
+        sm.views    += (p.Views_D1_Puras || 0);
+        sm.likes    += (p.Likes_D1    || 0);
+        sm.comments += (p.Comments_D1 || 0);
+        sm.shared   += (p.Shared_D1   || 0);
+        sm.saves    += (p.Saves_D1    || 0);
+    });
+    if(data.daily) {
+        Object.keys(data.daily).forEach(function(ym){
+            if(!newSummaryMap[ym]) newSummaryMap[ym]={posts:0,stories:0,followers:0,views:0,likes:0,saves:0,comments:0,shared:0,note:"JSON data"};
+            var sm = newSummaryMap[ym];
+            var s_total = 0, f_total = 0;
+            data.daily[ym].forEach(function(d){ s_total+=d.s||0; f_total+=d.f||0; });
+            sm.stories += s_total;
+            sm.followers += f_total;
+        });
+    }
+    CSV1_DATA.summary = newSummaryMap;
+    mergeCSVData();
+  } else {
+    console.warn("No se encontró window.MARKETING_DATA. ¿Corriste process_data.py?");
+    // Si no hay datos, inicializamos con los estáticos
+    mergeCSVData();
+  }
+});
+
+
+// ══════════════════════════════════════════
+// MARKETING CSV PARSER
+// ══════════════════════════════════════════
+function handleDrop(e, csvNum){
+  e.preventDefault();
+  var zoneId = csvNum === 1 ? "csvDropZone" : "csvDropZone2";
+  document.getElementById(zoneId).classList.remove("drag-over");
+  var file=e.dataTransfer.files[0];
+  if(file&&file.name.endsWith(".csv"))handleCSV(file, csvNum);
+}
+
+function handleCSV(file, csvNum){
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      parseAndApplyCSV(e.target.result, csvNum);
+      setStatus("✓ "+file.name+" cargado correctamente — CSV "+csvNum,"ok", csvNum);
+    }catch(err){
+      setStatus("⚠ Error al leer el CSV "+csvNum+": "+err.message,"err", csvNum);
+      console.error(err);
+    }
+  };
+  reader.readAsText(file,"UTF-8");
+}
+
+function setStatus(msg,cls,csvNum){
+  var elId = csvNum === 1 ? "csvStatus1" : (csvNum === 2 ? "csvStatus2" : "csvStatus");
+  var el=document.getElementById(elId);
+  if(el){el.textContent=msg; el.className="csv-status "+(cls||"");}
+}
+
+function parseAndApplyCSV(text, csvNum){
+  csvNum = csvNum || 1;
+  // Parser mejorado que maneja comillas y saltos de línea
+  function parseCSVLine(line){
+    var result=[];
+    var current='';
+    var inQuotes=false;
+    for(var i=0;i<line.length;i++){
+      var char=line[i];
+      if(char==='"'){
+        inQuotes=!inQuotes;
+      }else if(char===',' && !inQuotes){
+        result.push(current.trim());
+        current='';
+      }else{
+        current+=char;
+      }
+    }
+    result.push(current.trim());
+    return result;
+  }
+  
+  var lines=text.split(/\r?\n/);
+  var sep=",";
+  for(var si=0;si<Math.min(lines.length,5);si++){
+    if(lines[si].includes(";")){ sep=";"; break; }
+  }
+  var headerIdx=-1;
+  for(var hi=0;hi<Math.min(lines.length,8);hi++){
+    var low=lines[hi].toLowerCase();
+    if(low.includes("date")||low.includes("fecha")||low.includes("month")||low.includes("mes")){
+      headerIdx=hi; break;
+    }
+  }
+  if(headerIdx===-1) throw new Error("No encontré fila de encabezados (Date/Fecha/Month/Mes)");
+  
+  // Si la primera fila contiene solo D1/D3/D7 repetidos, saltarla
+  var firstLine=parseCSVLine(lines[0]);
+  if(firstLine.length>5 && firstLine.slice(5).every(function(h){return h==="D1"||h==="D3"||h==="D7";})){
+    headerIdx=1; // Usar la segunda fila como encabezados
+  }
+  
+  var rawHeaders=parseCSVLine(lines[headerIdx]);
+  var headers=rawHeaders.map(function(h){ return h.toLowerCase().replace(/[^a-z0-9]/g,""); });
+  var dataLines=lines.slice(headerIdx+1).filter(function(l){ return l.trim(); });
+  if(dataLines.length===0) throw new Error("Sin filas de datos debajo del encabezado");
+  function idx(names){
+    for(var ni=0;ni<names.length;ni++){
+      var n=names[ni].toLowerCase().replace(/[^a-z0-9]/g,"");
+      var i=headers.indexOf(n); if(i!==-1) return i;
+    }
+    return -1;
+  }
+  function get(row,names){ var i=idx(names); return i===-1?"":(row[i]||"").trim(); }
+  function num(v){ 
+    if(!v) return null;
+    var cleaned=(v||"").replace(/,/g,"").replace(/"/g,""); // Remover comas de miles y comillas
+    var n=parseFloat(cleaned);
+    return isNaN(n)?null:n; 
+  }
+  var iDate    = idx(["date","fecha"]);
+  var iMonth   = idx(["month","mes"]);
+  var iType    = idx(["tipo","type","kind","post"]);
+  var iDetail  = idx(["detalle","tema","detail","description","details"]);
+  var iStories = idx(["stories","historias","nstories","stories"]);
+  var iFoll    = idx(["followers","seguidores","nuevosseguidores","newfollowers","nuevosseguidoresdelda","newfollow"]);
+  // Para CSV con estructura D1/D3/D7 en columnas separadas
+  var iV1=idx(["viewsd1","vistsd1","views"]);
+  var iL1=idx(["likesd1","megustd1","likes"]);
+  var iC1=idx(["commentsd1","comentariosd1","comments"]);
+  var iSh1=idx(["sharedd1","compartidosd1","shared"]);
+  var iRp1=idx(["repostd1","repost"]);
+  var iSv1=idx(["savesd1","guardadosd1","saves"]);
+  var iV3=idx(["viewsd3"]),iL3=idx(["likesd3"]),iC3=idx(["commentsd3"]),iSh3=idx(["sharedd3"]),iRp3=idx(["repostd3"]),iSv3=idx(["savesd3"]);
+  var iV7=idx(["viewsd7"]),iL7=idx(["likesd7"]),iC7=idx(["commentsd7"]),iSh7=idx(["sharedd7"]),iRp7=idx(["repostd7"]),iSv7=idx(["savesd7"]);
+  var MMAP={
+    "enero":"01","febrero":"02","marzo":"03","abril":"04","mayo":"05","junio":"06",
+    "julio":"07","agosto":"08","septiembre":"09","octubre":"10","noviembre":"11","diciembre":"12",
+    "january":"01","february":"02","march":"03","april":"04","may":"05","june":"06",
+    "july":"07","august":"08","september":"09","october":"10","november":"11","december":"12"
+  };
+  var MNAME_ES={"01":"Enero","02":"Febrero","03":"Marzo","04":"Abril","05":"Mayo","06":"Junio",
+    "07":"Julio","08":"Agosto","09":"Septiembre","10":"Octubre","11":"Noviembre","12":"Diciembre"};
+  function monthToYM(mStr){
+    var k=mStr.toLowerCase().replace(/[^a-z]/g,"");
+    if(MMAP[k]) return "2026-"+MMAP[k];
+    return null;
+  }
+  var D1_START="2026-05-05";
+  var newPosts=[], newDailyMap={}, newSummaryMap={};
+  for(var ri=0;ri<dataLines.length;ri++){
+    var row=parseCSVLine(dataLines[ri]);
+    if(row.length<3) continue; // Saltar filas muy cortas
+    var dateStr = iDate!==-1?(row[iDate]||"").trim():"";
+    var monthStr= iMonth!==-1?(row[iMonth]||"").trim():"";
+    if(!dateStr&&!monthStr) continue;
+    var ym=monthToYM(monthStr);
+    if(!ym) continue;
+    var dayNum=parseInt(dateStr)||0;
+    var fullDate=ym+"-"+(dayNum<10?"0":"")+dayNum;
+    var isLeg=fullDate<D1_START;
+    var tipo    = iType!==-1?(row[iType]||"").trim():"";
+    var tema    = iDetail!==-1?(row[iDetail]||"").trim():"";
+    var stories = iStories!==-1?num(row[iStories]):null;
+    var folls   = iFoll!==-1?num(row[iFoll]):null;
+    var v1=iV1!==-1?num(row[iV1]):null,  l1=iL1!==-1?num(row[iL1]):null;
+    var c1=iC1!==-1?num(row[iC1]):null,  sh1=iSh1!==-1?num(row[iSh1]):null;
+    var rp1=iRp1!==-1?num(row[iRp1]):null,sv1=iSv1!==-1?num(row[iSv1]):null;
+    var v3=iV3!==-1?num(row[iV3]):null,  l3=iL3!==-1?num(row[iL3]):null;
+    var c3=iC3!==-1?num(row[iC3]):null,  sh3=iSh3!==-1?num(row[iSh3]):null;
+    var rp3=iRp3!==-1?num(row[iRp3]):null,sv3=iSv3!==-1?num(row[iSv3]):null;
+    var v7=iV7!==-1?num(row[iV7]):null,  l7=iL7!==-1?num(row[iL7]):null;
+    var c7=iC7!==-1?num(row[iC7]):null,  sh7=iSh7!==-1?num(row[iSh7]):null;
+    var rp7=iRp7!==-1?num(row[iRp7]):null,sv7=iSv7!==-1?num(row[iSv7]):null;
+    var mmNum=ym.split("-")[1];
+    var mNameES=MNAME_ES[mmNum]||monthStr;
+    if(!MONTH_NAMES[ym]) MONTH_NAMES[ym]=mNameES;
+    if(!newDailyMap[ym]) newDailyMap[ym]=[];
+    if(stories!==null||folls!==null){
+      newDailyMap[ym].push({d:dayNum,s:stories||0,f:folls||0});
+    }
+    var tipoLow=(tipo||"").toLowerCase();
+    if(tipoLow==="reel"||tipoLow==="post"){
+      newPosts.push({
+        date:dayNum,m:mNameES,ym:ym,tipo:tipo,tema:tema,leg:isLeg,
+        d1:(v1!==null)?[v1,l1,c1,sh1,rp1,sv1]:[],
+        d3:(v3!==null)?[v3,l3,c3,sh3,rp3,sv3]:[],
+        d7:(v7!==null)?[v7,l7,c7,sh7,rp7,sv7]:[]
+      });
+    }
+    if(!newSummaryMap[ym]) newSummaryMap[ym]={posts:0,stories:0,followers:0,views:0,likes:0,saves:0,comments:0,shared:0,note:"CSV importado"};
+    var sm=newSummaryMap[ym];
+    if(tipoLow==="reel"||tipoLow==="post"){
+      sm.posts+=1;sm.views+=v1||0;sm.likes+=l1||0;sm.saves+=sv1||0;sm.comments+=c1||0;sm.shared+=sh1||0;
+    }
+    sm.stories+=stories||0;
+    sm.followers+=folls||0;
+  }
+  var hasDailyData=Object.keys(newDailyMap).some(function(k){return newDailyMap[k].length>0;});
+  if(!hasDailyData&&newPosts.length===0)
+    throw new Error("No se encontraron datos válidos. El CSV necesita al menos: Date/Fecha y Month/Mes");
+  Object.keys(newDailyMap).forEach(function(ym){
+    if(!newSummaryMap[ym]) newSummaryMap[ym]={posts:0,stories:0,followers:0,views:0,likes:0,saves:0,comments:0,shared:0,note:"CSV importado"};
+    var sm=newSummaryMap[ym];
+    var totS=0,totF=0;
+    newDailyMap[ym].forEach(function(d){totS+=d.s||0;totF+=d.f||0;});
+    sm.stories=totS; sm.followers=totF;
+    if(sm.posts===0&&BASE_SUMMARY[ym]){
+      sm.posts=BASE_SUMMARY[ym].posts;
+      sm.views=BASE_SUMMARY[ym].views;
+      sm.likes=BASE_SUMMARY[ym].likes;
+      sm.saves=BASE_SUMMARY[ym].saves;
+      sm.comments=BASE_SUMMARY[ym].comments;
+      sm.shared=BASE_SUMMARY[ym].shared;
+      sm.note="Stories/seguidores del CSV · métricas de posts previas";
+    }
+  });
+  
+  // Almacenar datos en el CSV correspondiente
+  if(csvNum === 1){
+    CSV1_DATA = {posts:newPosts,daily:newDailyMap,summary:newSummaryMap};
+    csv1Loaded = true;
+  } else {
+    CSV2_DATA = {posts:newPosts,daily:newDailyMap,summary:newSummaryMap};
+    csv2Loaded = true;
+  }
+  
+  // Si ambos CSVs están cargados, fusionar datos
+  if(csv1Loaded && csv2Loaded){
+    mergeCSVData();
+  } else {
+    // Si solo uno está cargado, usar ese directamente
+    var dataToUse = csvNum === 1 ? CSV1_DATA : CSV2_DATA;
+    POSTS = dataToUse.posts.length>0 ? dataToUse.posts : BASE_POSTS.slice();
+    var mergedDaily = JSON.parse(JSON.stringify(BASE_DAILY));
+    Object.keys(dataToUse.daily).forEach(function(ym){
+      if(dataToUse.daily[ym].length>0) mergedDaily[ym]=dataToUse.daily[ym];
+    });
+    DAILY = mergedDaily;
+    var mergedSummary = JSON.parse(JSON.stringify(BASE_SUMMARY));
+    Object.keys(dataToUse.summary).forEach(function(ym){
+      mergedSummary[ym]=dataToUse.summary[ym];
+    });
+    SUMMARY = mergedSummary;
+    applyMergedData();
+  }
+}
+
+function mergeCSVData(){
+  // Fusionar posts: CSV1 tiene prioridad para posts
+  var mergedPosts = CSV1_DATA.posts.length>0 ? CSV1_DATA.posts : CSV2_DATA.posts;
+  
+  // Fusionar daily: combinar datos de ambos CSVs
+  var mergedDaily = JSON.parse(JSON.stringify(BASE_DAILY));
+  [CSV1_DATA.daily, CSV2_DATA.daily].forEach(function(dailyData){
+    Object.keys(dailyData).forEach(function(ym){
+      if(!mergedDaily[ym]) mergedDaily[ym]=[];
+      if(dailyData[ym].length>0){
+        // Merge daily entries by day, keeping latest values
+        var dayMap={};
+        dailyData[ym].forEach(function(d){
+          dayMap[d.d]=d;
+        });
+        mergedDaily[ym].forEach(function(d){
+          if(dayMap[d.d]) mergedDaily[ym][mergedDaily[ym].indexOf(d)]=dayMap[d.d];
+        });
+        // Add new days
+        Object.keys(dayMap).forEach(function(day){
+          if(!mergedDaily[ym].some(function(d){return d.d==day;})){
+            mergedDaily[ym].push(dayMap[day]);
+          }
+        });
+      }
+    });
+  });
+  
+  // Fusionar summary: CSV1 tiene prioridad para posts/views/likes, CSV2 para stories/followers
+  var mergedSummary = JSON.parse(JSON.stringify(BASE_SUMMARY));
+  var allYMs = new Set([...Object.keys(CSV1_DATA.summary), ...Object.keys(CSV2_DATA.summary)]);
+  allYMs.forEach(function(ym){
+    var s1 = CSV1_DATA.summary[ym] || {};
+    var s2 = CSV2_DATA.summary[ym] || {};
+    mergedSummary[ym]={
+      posts: s1.posts||0,
+      stories: (s1.stories||0)+(s2.stories||0),
+      followers: (s1.followers||0)+(s2.followers||0),
+      views: s1.views||0,
+      likes: s1.likes||0,
+      saves: s1.saves||0,
+      comments: s1.comments||0,
+      shared: s1.shared||0,
+      note: "Fusión de CSV1 y CSV2"
+    };
+  });
+  
+  POSTS = mergedPosts.length>0 ? mergedPosts : BASE_POSTS.slice();
+  DAILY = mergedDaily;
+  SUMMARY = mergedSummary;
+  applyMergedData();
+}
+
+function applyMergedData(){
+  MONTH_NAMES = JSON.parse(JSON.stringify(MONTH_NAMES_MAP));
+  var allYMs=Object.keys(SUMMARY).sort();
+  allYMs.forEach(function(ym){
+    if(!MONTH_NAMES[ym]){
+      var mmNum=ym.split("-")[1];
+      var MNAME_ES2={"01":"Enero","02":"Febrero","03":"Marzo","04":"Abril","05":"Mayo",
+        "06":"Junio","07":"Julio","08":"Agosto","09":"Septiembre","10":"Octubre","11":"Noviembre","12":"Diciembre"};
+      MONTH_NAMES[ym]=MNAME_ES2[mmNum]||ym;
+    }
+  });
+  rebuildSelectors(allYMs);
+  fromYM=allYMs[0]; toYM=allYMs[allYMs.length-1];
+  document.getElementById("selFrom").value=fromYM;
+  document.getElementById("selTo").value=toYM;
+  updatePeriodPill();
+  updateKPIs();
+  buildMonthlyTable();
+  buildAll();
+}
+
+function rebuildSelectors(yms){
+  ["selFrom","selTo"].forEach(function(id){
+    var sel=document.getElementById(id), cur=sel.value;
+    sel.innerHTML="";
+    yms.forEach(function(ym){
+      var o=document.createElement("option");
+      o.value=ym; o.textContent=MONTH_NAMES[ym]+" "+ym.split("-")[0];
+      sel.appendChild(o);
+    });
+    if(yms.indexOf(cur)!==-1)sel.value=cur;
+  });
+}
+
+// ══════════════════════════════════════════
+// MARKETING CHARTS
+// ══════════════════════════════════════════
+function getC(){
+  var dk=document.documentElement.classList.contains("theme-dark");
+  return{text:dk?"#e8e4dc":"#1c1a16",sec:dk?"#8a8478":"#6b6358",
+    grid:dk?"rgba(255,255,255,0.04)":"rgba(0,0,0,0.05)",
+    green:"#7d9c6e",gold:"#c4a96b",mauve:"#a07090",blue:"#6090a0"};
+}
+
+function bOpts(c){
+  return{responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{enabled:true,padding:10,cornerRadius:8,
+      titleFont:{family:"Inter",size:12},bodyFont:{family:"Inter",size:11}}},
+    scales:{
+      x:{ticks:{color:c.sec,font:{family:"Inter",size:10},maxRotation:45,autoSkip:true},grid:{color:c.grid}},
+      y:{ticks:{color:c.sec,font:{family:"Inter",size:10}},grid:{color:c.grid},beginAtZero:true}
+    },layout:{padding:{top:6,right:6,bottom:4,left:4}}};
+}
+
+function sc(id,cfg){
+  if(typeof Chart==="undefined")return;
+  var el=document.getElementById(id);if(!el)return;
+  if(el._ci){try{el._ci.destroy();}catch(e){}}
+  el._ci=new Chart(el,cfg);
+}
+
+function activeMonths(){return Object.keys(SUMMARY).sort().filter(function(m){return m>=fromYM&&m<=toYM;});}
+function filteredPosts(){var ms=activeMonths();return POSTS.filter(function(p){return ms.indexOf(p.ym)!==-1;});}
+
+function buildAll(){
+  var c=getC(),ms=activeMonths();
+  var labels=ms.map(function(m){return MONTH_NAMES[m]||m;});
+  var pal=[c.sec+"66",c.green+"aa",c.gold+"aa",c.mauve+"aa",c.blue+"aa"];
+  var bgColors=ms.map(function(m,i){return pal[i%pal.length];});
+
+  sc("cMonthPosts",{type:"bar",data:{labels:labels,datasets:[{label:"Posts",
+    data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].posts:0;}),
+    backgroundColor:bgColors,borderRadius:5,borderSkipped:false}]},options:bOpts(c)});
+
+  sc("cMonthViews",{type:"bar",data:{labels:labels,datasets:[{label:"Views",
+    data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].views:0;}),
+    backgroundColor:bgColors,borderRadius:5,borderSkipped:false}]},options:bOpts(c)});
+
+  var mgO=JSON.parse(JSON.stringify(bOpts(c)));
+  mgO.plugins.legend={display:true,position:"top",labels:{color:c.sec,font:{family:"Inter",size:11},boxWidth:9,padding:14}};
+  sc("cMonthMetrics",{type:"bar",data:{labels:labels,datasets:[
+    {label:"Likes",   data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].likes:0;}),   backgroundColor:c.green+"cc",borderRadius:4},
+    {label:"Shared",  data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].shared:0;}),  backgroundColor:c.gold+"cc", borderRadius:4},
+    {label:"Saves",   data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].saves:0;}),   backgroundColor:c.mauve+"cc",borderRadius:4},
+    {label:"Comments",data:ms.map(function(m){return SUMMARY[m]?SUMMARY[m].comments:0;}),backgroundColor:c.blue+"cc", borderRadius:4}
+  ]},options:mgO});
+
+  var hasDailyMonths=ms.some(function(m){return DAILY[m]&&DAILY[m].length>0;});
+  var dc=document.getElementById("daily-content"),dn=document.getElementById("daily-nodata");
+  if(!hasDailyMonths){dc.style.display="none";dn.style.display="";}
+  else{dc.style.display="";dn.style.display="none";}
+
+  var dailyPalette=[c.green+"bb",c.gold+"bb",c.blue+"bb",c.mauve+"bb"];
+  ms.forEach(function(ym,idx){
+    if(!DAILY[ym]||!DAILY[ym].length)return;
+    var dd=DAILY[ym], canvasId="cStoriesApr";
+    if(ym==="2026-04")canvasId="cStoriesApr";
+    else if(ym==="2026-05")canvasId="cStoriesMay";
+    else return;
+    sc(canvasId,{type:"bar",data:{labels:dd.map(function(d){return"D"+d.d;}),
+      datasets:[{label:"Stories",data:dd.map(function(d){return d.s;}),backgroundColor:dailyPalette[idx%dailyPalette.length],borderRadius:3}]},options:bOpts(c)});
+    var card=document.getElementById(canvasId).closest(".chart-card");
+    if(card){var t=card.querySelector(".chart-title");if(t)t.textContent="Stories por día — "+(MONTH_NAMES[ym]||ym)+" 2026";}
+    var sub=card&&card.querySelector(".chart-sub");
+    if(sub&&ym==="2026-05"){var lastD=dd.filter(function(d){return d.s||d.f;});sub.textContent="Datos hasta el día "+(lastD.length?lastD[lastD.length-1].d:"—");}
+  });
+
+  var allD=[];
+  ms.forEach(function(m){if(DAILY[m])DAILY[m].forEach(function(d){allD.push({l:(MONTH_NAMES[m]||m).slice(0,3)+" "+d.d,f:d.f});});});
+  if(allD.length){
+    sc("cFollowersDaily",{type:"bar",data:{labels:allD.map(function(d){return d.l;}),
+      datasets:[{label:"Seguidores",data:allD.map(function(d){return d.f;}),backgroundColor:c.mauve+"bb",borderRadius:3}]},options:bOpts(c)});
+  }
+
+  buildPostCharts();
+}
+
+function buildPostCharts(c) {
+  if (!c) c = getC();
+
+  // 1. Diagnóstico de entrada en Consola
+  console.log("=== INICIANDO RENDERS DE MARKETING ===");
+  var ps = typeof filteredPosts === 'function' ? filteredPosts() : [];
+  console.log("Posts detectados para graficar:", ps.length);
+  if (ps.length > 0) {
+    console.log("Estructura del primer post en el JSON:", ps[0]);
+  } else {
+    console.warn("ALERTA: El array de posts filtrados está vacío. Revisa la carga del JSON.");
+  }
+
+  // 2. Extraer datos y blindar contra nulos
+  var labels = ps.map(function(p) { return p.label || p.date || "Sin fecha"; });
+  var totD1  = ps.map(function(p) { return p.Total_Interacciones_D1 || 0; });
+  var totD3  = ps.map(function(p) { return p.Total_Interacciones_D3; }); // null = sin barra
+  var totD7  = ps.map(function(p) { return p.Total_Interacciones_D7; }); // null = sin barra
+  var viewsD1 = ps.map(function(p) { return p.Views_D1_Puras || 0; });
+
+  // 3. Opciones base para Chart.js
+  var optBars = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: { ticks: { maxRotation: 45, minRotation: 45 } },
+      y: { beginAtZero: true }
+    },
+    plugins: {
+      legend: { display: false },
+      tooltip: { mode: 'index', intersect: false }
+    }
+  };
+
+  // 4. Renderizar Gráfico 1: Interacciones Agrupadas (Barras)
+  try {
+    var el1 = document.getElementById("cInteractions");
+    if (el1) {
+      sc("cInteractions", {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: "Inter. D1", data: totD1, backgroundColor: c.blue + "cc", borderRadius: 4 },
+            { label: "Inter. D3", data: totD3, backgroundColor: c.gold + "cc", borderRadius: 4 },
+            { label: "Inter. D7", data: totD7, backgroundColor: c.green + "cc", borderRadius: 4 }
+          ]
+        },
+        options: optBars
+      });
+      console.log("✅ Gráfico 1 (cInteractions) renderizado.");
+    } else {
+      console.error("❌ No se encontró <canvas id='cInteractions'> en el HTML.");
+    }
+  } catch (err) {
+    console.error("Error al construir cInteractions:", err);
+  }
+
+  // 5. Renderizar Gráfico 2: Alcance Views D1 (Línea + Área)
+  try {
+    var el2 = document.getElementById("cViewsD1");
+    if (el2) {
+      sc("cViewsD1", {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Views D1",
+            data: viewsD1,
+            borderColor: c.mauve,
+            backgroundColor: c.mauve + "33",
+            borderWidth: 3,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 4,
+            spanGaps: true
+          }]
+        },
+        options: optBars
+      });
+      console.log("✅ Gráfico 2 (cViewsD1) renderizado.");
+    } else {
+      console.error("❌ No se encontró <canvas id='cViewsD1'> en el HTML.");
+    }
+  } catch (err) {
+    console.error("Error al construir cViewsD1:", err);
+  }
+
+  // 6. Actualizar tabla inferior de registros
+  var tbody = document.getElementById("posts-tbody");
+  if (tbody) {
+    tbody.innerHTML = "";
+    ps.forEach(function(p) {
+      var tr = document.createElement("tr");
+      var pill = "<span class='pill pill-" + (p.tipo || "post").toLowerCase() + "'>" + (p.tipo || "Post") + "</span>";
+      var src = p.leg
+        ? "<span style='font-size:10px;color:var(--warning)'>Pre-Mayo</span>"
+        : "<span style='font-size:10px;color:var(--positive)'>Actual</span>";
+      function ce(v) { return (v == null) ? "<td><span class='nn'>—</span></td>" : "<td>" + Number(v).toLocaleString() + "</td>"; }
+      tr.innerHTML = "<td>" + (p.date || "") + " " + (p.m || "") + "</td>" +
+                     "<td>" + pill + "</td>" +
+                     "<td>" + (p.tema || "") + "</td>" +
+                     ce(p.Views_D1_Puras) +
+                     ce(p.Total_Interacciones_D1) +
+                     ce(p.Total_Interacciones_D3) +
+                     ce(p.Total_Interacciones_D7) +
+                     "<td>" + src + "</td>";
+      tbody.appendChild(tr);
+    });
+    console.log("✅ Tabla de posts actualizada (" + ps.length + " filas).");
+  }
+}
+
+function updateKPIs(){
+  var ms=activeMonths();
+  var tp=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].posts:0);},0);
+  var tv=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].views:0);},0);
+  var tl=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].likes:0);},0);
+  var ts=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].saves:0);},0);
+  var tst=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].stories:0);},0);
+  var tf=ms.reduce(function(a,m){return a+(SUMMARY[m]?SUMMARY[m].followers:0);},0);
+  document.getElementById("kv-posts").textContent=tp;
+  document.getElementById("kv-views").textContent=tv.toLocaleString("es-MX");
+  document.getElementById("kv-likes").textContent=tl.toLocaleString("es-MX");
+  document.getElementById("kv-saves").textContent=ts;
+  document.getElementById("kv-stories").textContent=tst||"—";
+  document.getElementById("kv-followers").textContent=tf>0?"+"+tf:"—";
+  document.getElementById("ks-posts").textContent=ms.map(function(m){return MONTH_NAMES[m]||m;}).join(" + ");
+}
+
+function buildMonthlyTable(){
+  var ms=activeMonths(),tbody=document.getElementById("monthly-tbody");
+  tbody.innerHTML="";
+  ms.forEach(function(ym){
+    var s=SUMMARY[ym];if(!s)return;
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><strong>"+(MONTH_NAMES[ym]||ym)+"</strong></td>"
+      +"<td>"+s.posts+"</td><td>"+(s.stories||"—")+"</td><td>"+(s.followers?"+"+s.followers:"—")+"</td>"
+      +"<td>"+s.views.toLocaleString("es-MX")+"</td><td>"+s.likes+"</td><td>"+s.saves+"</td>"
+      +"<td><span class='mn'>"+(s.note||"")+"</span></td>";
+    tbody.appendChild(tr);
+  });
+}
+
+function updatePeriodPill(){
+  var fl=(MONTH_NAMES[fromYM]||fromYM).slice(0,3),tl=(MONTH_NAMES[toYM]||toYM).slice(0,3);
+  document.getElementById("periodLbl").textContent=fl===tl?fl:fl+" → "+tl;
+}
+
+function applyFilter(){
+  var f=document.getElementById("selFrom").value,t=document.getElementById("selTo").value;
+  if(f>t)t=f;fromYM=f;toYM=t;
+  document.getElementById("selTo").value=t;
+  updatePeriodPill();updateKPIs();buildMonthlyTable();buildAll();
+}
+
+
+
+function showTab(name,btn){
+  document.querySelectorAll('.tab-section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  setTimeout(function(){document.querySelectorAll("#tab-"+name+" .rev").forEach(function(el){el.classList.add("vis");});},60);
+  // Re-render post charts when switching to posts tab (canvas must be visible for Chart.js to measure size)
+  if(name === 'posts'){
+    setTimeout(function(){ buildPostCharts(); }, 80);
+  }
+}
+
+// ══════════════════════════════════════════
+// OCCUPANCY DATA
+// ══════════════════════════════════════════
+let occParsedData=null, occCurrentView='month', occActiveMonth=null, occCharts={};
+const OCC_MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+document.getElementById('occFileInput').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{ occParsedData=parseOccFile(ev.target.result); occActiveMonth=null; renderOcc(); };
+  r.readAsText(f,'utf-8');
+});
+
+function parseOccFile(raw) {
+  const lines=raw.split('\n').map(l=>l.split('\t').map(c=>c.trim()));
+  const months={};
+  let cur=null;
+
+  for(let i=0;i<lines.length;i++){
+    const row=lines[i];
+    if(!row||row.every(c=>!c)) continue;
+    const first=row[0].replace('}','').trim().toLowerCase();
+
+    const mKey=OCC_MONTHS.find(m=>first.startsWith(m));
+    if(mKey){ cur=mKey; months[cur]={rooms:[],total:null,retreats:[]}; continue; }
+    if(!cur) continue;
+
+    if(first==='room') continue;
+
+    const retreatName = row[7]||row[6]||'';
+    const inDate = row[8]||row[7]||'';
+    const outDate = row[9]||row[8]||'';
+    const nights = pOccNum(row[10])||pOccNum(row[9])||0;
+
+    if(retreatName && retreatName.toLowerCase()!=='retreat' && retreatName.toLowerCase()!=='column 1' && nights>0){
+      months[cur].retreats.push({ name: retreatName, nights, inDate, outDate });
+    }
+
+    if(first===''&&row[1]){
+      const occ=pOcc(row[1]),total=pOccNum(row[2]),priv=pOccNum(row[3]),grp=pOccNum(row[4]),days=pOccNum(row[5]);
+      if(!isNaN(occ)) months[cur].total={occ,total:isNaN(total)?0:total,priv:isNaN(priv)?0:priv,grp:isNaN(grp)?0:grp,days:isNaN(days)?0:days};
+      continue;
+    }
+
+    const occ=pOcc(row[1]),total=pOccNum(row[2]),priv=pOccNum(row[3]),grp=pOccNum(row[4]),days=pOccNum(row[5]);
+    if(first&&!isNaN(occ)){
+      months[cur].rooms.push({room:first,occ,total:isNaN(total)?0:total,priv:isNaN(priv)?0:priv,grp:isNaN(grp)?0:grp,days:isNaN(days)?0:days});
+    }
+  }
+  return months;
+}
+
+function pOcc(v){ return v?parseFloat(v.replace('%','').replace(',','.')):NaN; }
+function pOccNum(v){ return v?parseFloat(v.replace(',','.')):NaN; }
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function setView(v){ occCurrentView=v; document.querySelectorAll('#viewToggle .toggle-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&v==='month')||(i===1&&v==='room'))); renderOcc(); }
+function setOccMonth(m){ occActiveMonth=occActiveMonth===m?null:m; renderOcc(); }
+
+function renderOcc(){
+  if(!occParsedData) return;
+  Object.values(occCharts).forEach(c=>c.destroy()); occCharts={};
+
+  const months=Object.keys(occParsedData).sort((a,b)=>OCC_MONTHS.indexOf(a)-OCC_MONTHS.indexOf(b));
+  const withData=months.filter(m=>occParsedData[m].total&&occParsedData[m].total.total>0);
+  const sel=occActiveMonth?[occActiveMonth]:withData;
+
+  const selRetreats=[];
+  sel.forEach(m=>{ if(occParsedData[m].retreats) selRetreats.push(...occParsedData[m].retreats); });
+  const extNights=selRetreats.reduce((s,r)=>s+r.nights,0);
+  const extNames=[...new Set(selRetreats.map(r=>r.name))];
+
+  const selNights=sel.reduce((s,m)=>s+(occParsedData[m].total?.total||0),0);
+  const selPriv=sel.reduce((s,m)=>s+(occParsedData[m].total?.priv||0),0);
+  const selDays=sel.reduce((s,m)=>s+(occParsedData[m].total?.days||0),0);
+  const selOcc=selDays>0?selNights/selDays*100:0;
+  const annOcc=withData.reduce((s,m)=>s+(occParsedData[m].total?.total||0),0)/Math.max(1,withData.reduce((s,m)=>s+(occParsedData[m].total?.days||0),0))*100;
+
+  const extPerMonth=sel.map(m=>occParsedData[m].retreats?.reduce((s,r)=>s+r.nights,0)||0);
+  const privPerMonth=sel.map(m=>occParsedData[m].total?.priv||0);
+  const occPerMonth=sel.map(m=>+(occParsedData[m].total?.occ??0).toFixed(1));
+  const lbls=sel.map(m=>cap(m).slice(0,3));
+
+  let roomSum={};
+  sel.forEach(m=>occParsedData[m].rooms.forEach(r=>{
+    if(!roomSum[r.room]) roomSum[r.room]={nights:0,days:0};
+    roomSum[r.room].nights+=r.total||0; roomSum[r.room].days+=r.days||0;
+  }));
+  const roomEntries=Object.entries(roomSum).map(([r,v])=>({room:r,occ:v.days>0?v.nights/v.days*100:0})).sort((a,b)=>b.occ-a.occ);
+
+  const monthBtns=months.map(m=>{
+    const has=occParsedData[m].total&&occParsedData[m].total.total>0;
+    const hasRetreats=occParsedData[m].retreats&&occParsedData[m].retreats.length>0;
+    return `<button class="month-btn${occActiveMonth===m?' active':''}" onclick="setOccMonth('${m}')" ${!has?'disabled':''}>${cap(m).slice(0,3)}${hasRetreats?'<span class="retreat-tag">ER</span>':''}</button>`;
+  }).join('');
+
+  const extSubLabel = extNights>0
+    ? `${extNights} noches${extNames.length?` (${extNames.join(', ')})`:''}` 
+    : '—';
+
+  const roomsHTML=roomEntries.map(r=>`
+    <div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:var(--text-sec)">Hab ${r.room}</span>
+        <span style="font-weight:500">${r.occ.toFixed(0)}%</span>
+      </div>
+      <div class="occ-bar-wrap"><div class="occ-bar" style="width:${Math.min(r.occ,100).toFixed(1)}%"></div></div>
+    </div>`).join('');
+
+  const dk=document.documentElement.classList.contains("theme-dark");
+  const occColor=dk?"#7d9c6e":"#4d7040";
+  const extColor=dk?"#5DCAA5":"#5DCAA5";
+
+  document.getElementById('occ-content').innerHTML=`
+    <div class="month-filter">${monthBtns}</div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Occupancy</div>
+        <div class="kpi-value ac">${selOcc.toFixed(1)}%</div>
+        <div class="kpi-sub">Anual: ${annOcc.toFixed(1)}%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Noches vendidas</div>
+        <div class="kpi-value">${selNights.toLocaleString()}</div>
+        <div class="kpi-sub">de ${selDays.toLocaleString()} disponibles</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Private retreats</div>
+        <div class="kpi-value go">${selPriv.toLocaleString()}</div>
+        <div class="kpi-sub">${selNights>0?(selPriv/selNights*100).toFixed(0):0}% del total</div>
+      </div>
+      <div class="kpi" style="${extNights>0?'border-color:'+extColor+';background:rgba(93,202,165,0.07)':''}">
+        <div class="kpi-label">External retreat</div>
+        <div class="kpi-value" style="font-size:${extNights>0?'20':'24'}px;color:${extNights>0?extColor:'var(--text-sec)'}">${extNights>0?extNights+'n':'—'}</div>
+        <div class="kpi-sub">${extNights>0?extSubLabel:'Sin retreats externos'}</div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">Occupancy % por mes</div>
+        <div class="cw"><canvas id="occChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Por habitación</div>
+        ${roomsHTML}
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Noches: Private vs External Retreat</div>
+      <div class="legend">
+        <div class="legend-item"><div class="ld" style="background:${occColor}"></div>Private</div>
+        <div class="legend-item"><div class="ld" style="background:${extColor}"></div>External Retreat</div>
+      </div>
+      <div style="position:relative;width:100%;height:150px"><canvas id="mixChart"></canvas></div>
+    </div>`;
+
+  const c=getC();
+  occCharts.occ=new Chart(document.getElementById('occChart'),{
+    type:'bar',
+    data:{labels:lbls,datasets:[{label:'Occ %',data:occPerMonth,backgroundColor:occPerMonth.map(v=>v>=70?occColor:v>=40?extColor:'#9FE1CB'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y.toFixed(1)+'%'}}},scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:c.grid}},x:{ticks:{font:{size:11},autoSkip:false}}}}
+  });
+
+  occCharts.mix=new Chart(document.getElementById('mixChart'),{
+    type:'bar',
+    data:{labels:lbls,datasets:[
+      {label:'Private',data:privPerMonth,backgroundColor:occColor,borderRadius:4,borderSkipped:false},
+      {label:'External Retreat',data:extPerMonth,backgroundColor:extColor,borderRadius:4,borderSkipped:false}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:11},autoSkip:false}},y:{stacked:true,ticks:{font:{size:11}},grid:{color:c.grid}}}}
+  });
+}
+
+// ══════════════════════════════════════════
+// SHARED UI
+// ══════════════════════════════════════════
+function toggleMenu(){document.getElementById("vmDrop").classList.toggle("open");}
+document.addEventListener("click",function(e){if(!e.target.closest(".viz-menu"))document.getElementById("vmDrop").classList.remove("open");});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")document.getElementById("vmDrop").classList.remove("open");});
+
+var curTheme=localStorage.getItem("vt")||(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");
+function applyTheme(t){
+  document.documentElement.className="theme-"+t;
+  document.getElementById("themeIco").textContent=t==="dark"?"🌙":"☀️";
+  document.getElementById("themeLbl").textContent=t==="dark"?"Dark":"Light";
+  localStorage.setItem("vt",t);curTheme=t;
+  setTimeout(function(){buildAll();if(occParsedData)renderOcc();},80);
+}
+function cycleTheme(){applyTheme(curTheme==="dark"?"light":"dark");}
+applyTheme(curTheme);
+
+var rObs=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add("vis");rObs.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll(".rev").forEach(function(el){rObs.observe(el);});
+
+async function dlImage(){
+  var m=document.querySelector(".viz-menu");m.style.display="none";
+  try{var u=await htmlToImage.toPng(document.body,{quality:1,pixelRatio:2});
+    var a=document.createElement("a");a.href=u;a.download="dashboard-integrado.png";a.click();}
+  catch(err){console.error(err);}
+  m.style.display="";
+}
+
+window.addEventListener("load",function(){
+  updateKPIs();buildMonthlyTable();
+  setTimeout(function(){
+    buildAll();window.dispatchEvent(new Event("resize"));
+    setTimeout(function(){document.querySelectorAll("#tab-resumen .rev").forEach(function(el){el.classList.add("vis");});},300);
+  },200);
+});
+</script>
+</body>
+</html>
